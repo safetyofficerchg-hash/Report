@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ระบบส่งรายงานความปลอดภัย</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f5f1f1;--card:#fff;--tx:#2a1717;--mut:#7a6666;--pri:#d32f2f;--pri2:#fdecec;--bd:#eadede;--err:#b3261e;--sh:0 4px 16px rgba(120,20,20,.10);--hero:linear-gradient(135deg,#a31515,#e53935)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171112;--card:#241a1b;--tx:#f3e9e9;--mut:#b09a9a;--pri:#ff6b6b;--pri2:#3a1c1e;--bd:#3a2a2b;--err:#ff8a80;--sh:0 4px 16px rgba(0,0,0,.35);--hero:linear-gradient(135deg,#5c1010,#b62828)}}
+:root[data-theme="dark"]{--bg:#171112;--card:#241a1b;--tx:#f3e9e9;--mut:#b09a9a;--pri:#ff6b6b;--pri2:#3a1c1e;--bd:#3a2a2b;--err:#ff8a80;--sh:0 4px 16px rgba(0,0,0,.35);--hero:linear-gradient(135deg,#5c1010,#b62828)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:'Prompt',system-ui,sans-serif;line-height:1.5}
+.hero{background:var(--hero);color:#fff;padding:28px 16px 64px}
+.w{max-width:1240px;margin:0 auto;padding:0 16px}
+.hero .w{padding:0}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:46px;height:46px;border-radius:14px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:26px}
+.brand h1{margin:0;font-size:22px}.brand p{margin:0;opacity:.85;font-size:14px}
+nav{display:inline-flex;gap:4px;background:rgba(0,0,0,.2);padding:4px;border-radius:14px;margin-top:18px}
+nav a{padding:9px 18px;border-radius:10px;text-decoration:none;color:#fff;font-weight:500;font-size:15px;opacity:.8}
+nav a.on{background:#fff;color:#a31515;opacity:1;font-weight:700}
+main{margin-top:-40px;padding-bottom:40px}
+.p{display:none}.p.on{display:block}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.st{background:var(--card);border-radius:16px;padding:16px;box-shadow:var(--sh)}
+.st small{color:var(--mut);font-size:13px}.st b{display:block;font-size:30px;color:var(--pri);line-height:1.2}
+h2{font-size:17px;margin:22px 0 10px}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.c{background:var(--card);border-radius:18px;padding:18px 14px;box-shadow:var(--sh);display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;cursor:pointer;transition:all .22s;min-height:190px}
+.c:hover{background:linear-gradient(135deg,#b71c1c,#ef5350);color:#fff;transform:translateY(-6px);box-shadow:0 14px 28px rgba(183,28,28,.35)}
+.c:hover b,.c:hover span{color:#fff}
+.c:hover .ic{background:rgba(255,255,255,.22);transform:scale(1.1)}
+.c:hover .bar{background:rgba(255,255,255,.3)}.c:hover .bar i{background:#fff}
+.ic{width:56px;height:56px;border-radius:16px;background:var(--pri2);display:grid;place-items:center;font-size:28px;transition:all .22s}
+.c span{font-size:14px;font-weight:500;display:block;line-height:1.35;flex:1}
+.c .bar{width:100%}
+.bar{height:5px;border-radius:5px;background:var(--bd);margin-top:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--pri);border-radius:5px;transition:width .4s}
+.c b{font-size:30px;color:var(--pri);line-height:1}
+.box{background:var(--card);border-radius:16px;padding:20px;box-shadow:var(--sh)}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+.full{grid-column:1/-1}
+label{display:block;font-weight:500;margin:14px 0 6px;font-size:14px}
+input,select,button{font:inherit;width:100%;padding:12px;border-radius:12px;border:1.5px solid var(--bd);background:var(--bg);color:var(--tx);outline:0}
+input:focus,select:focus{border-color:var(--pri);box-shadow:0 0 0 3px var(--pri2)}
+input[readonly]{opacity:.7;background:var(--pri2)}
+input[type=file]{padding:18px;border-style:dashed;background:var(--pri2);cursor:pointer}
+button{background:var(--hero);color:#fff;border:0;font-weight:700;margin-top:22px;cursor:pointer;font-size:16px;padding:14px}
+button:disabled{opacity:.5}
+.n{font-size:12px;color:var(--mut);margin-top:4px}
+#msg{margin-top:12px;padding:12px;border-radius:12px;display:none}
+#msg.ok{display:block;background:var(--pri2);color:var(--pri)}
+#msg.er{display:block;color:var(--err);border:1px solid var(--err)}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:600px}
+th{font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.03em}
+td,th{text-align:left;padding:10px 8px;border-bottom:1px solid var(--bd)}
+tr:last-child td{border:0}
+.tag{background:var(--pri2);color:var(--pri);padding:2px 10px;border-radius:99px;font-size:12px;white-space:nowrap}
+.sc{overflow-x:auto}
+@media(max-width:1100px){.grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:640px){.grid{grid-template-columns:repeat(2,1fr)}.stats{grid-template-columns:1fr 1fr}.stats .st:first-child{grid-column:1/-1}.f2{grid-template-columns:1fr}}
+
+body{font-size:16px}
+.brand h1{font-size:27px}.brand p{font-size:16px}
+nav a{font-size:17px;padding:10px 24px}
+h2{font-size:22px}
+.live{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:14px;padding:12px 16px;box-shadow:var(--sh);font-size:15px;color:var(--mut);margin-bottom:6px}
+.live i{width:10px;height:10px;border-radius:50%;background:#2e7d32;animation:pl 1.6s infinite}
+.live.off i{background:#9e9e9e;animation:none}
+@keyframes pl{0%{box-shadow:0 0 0 0 rgba(46,125,50,.5)}100%{box-shadow:0 0 0 10px rgba(46,125,50,0)}}
+.live .rf{width:auto;margin:0 0 0 auto;padding:6px 14px;font-size:14px;border-radius:99px;background:var(--pri2);color:var(--pri)}
+.c{border-top:5px solid var(--pri);align-items:flex-start;text-align:left;min-height:175px;padding:20px 18px 18px}
+.c span{font-size:17px;font-weight:600;line-height:1.5}
+.c b{font-size:44px;line-height:1}
+.c small{color:var(--mut);font-size:14px;margin-top:-6px}
+.c:hover small{color:#ffe3e3}
+label{font-size:16px}
+input,select,button{font-size:17px}
+td,th{font-size:15px}
+@media(max-width:640px){.c span{font-size:16px}.c b{font-size:36px}}
+.ov{position:fixed;inset:0;background:rgba(20,8,8,.5);display:none;z-index:50;padding:calc(env(safe-area-inset-top,0px) + 12px) 12px 12px;overflow:auto}
+.ov.on{display:block}
+.md{max-width:920px;margin:16px auto;background:var(--card);border-radius:18px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.mh{display:flex;align-items:center;gap:12px;padding:20px 24px;background:var(--pri2);border-bottom:1px solid var(--bd)}
+.mh h3{margin:0;font-size:20px;font-weight:600;flex:1;line-height:1.4}.mh em{font-style:normal;color:var(--pri)}
+.x{width:auto;margin:0;padding:2px 10px;background:none;color:var(--mut);font-size:28px;line-height:1}
+.mb{padding:20px 24px 24px}
+.mb input{padding:13px 16px;border-radius:12px}
+.mt{border:1px solid var(--bd);border-radius:14px;margin-top:16px;overflow:auto}
+.mt table{min-width:480px}.mt th{background:var(--bg);color:var(--tx);font-size:15px;text-transform:none;font-weight:500}
+.mt td,.mt th{padding:14px 12px}.mt td:first-child,.mt th:first-child{text-align:center;width:70px}
+.mt a{color:var(--pri);font-weight:500}
+.bad{border-color:var(--err)!important;background:rgba(179,38,30,.06)}
+.prow{display:flex;gap:10px;flex-wrap:wrap}.prow select,.prow input{flex:1;min-width:150px;width:auto}
+.sum{display:flex;gap:34px;margin:14px 0 10px;flex-wrap:wrap}.sum div{display:flex;flex-direction:column}.sum b{font-size:36px;line-height:1.1;color:var(--pri)}.sum small{color:var(--mut);font-size:14px}
+.pb{height:12px;border-radius:12px;background:var(--bd);overflow:hidden}.pb i{display:block;height:100%;width:0;background:#2e9e5b;transition:width .4s}
+.seg{display:flex;gap:6px}.seg button{width:auto;margin:0;padding:10px 16px;background:var(--bg);color:var(--tx);border:1.5px solid var(--bd);font-size:15px;font-weight:500}.seg button.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-top:14px}
+.tl{border-radius:14px;padding:12px 12px 10px;display:flex;flex-direction:column;gap:2px;text-decoration:none;color:var(--tx);border:1.5px solid var(--bd);border-left-width:6px;background:var(--card);transition:.18s}
+.tl em{font-style:normal;font-weight:600;font-size:20px}.tl span{font-size:14px;line-height:1.35;flex:1}.tl small{font-size:12.5px;margin-top:4px;font-weight:500}
+.tl.ok{border-left-color:#2e9e5b}.tl.ok small{color:#2e9e5b}
+.tl.no{border-left-color:var(--pri);background:var(--pri2)}.tl.no small{color:var(--pri)}
+a.tl:hover{transform:translateY(-3px);box-shadow:var(--sh);border-color:#2e9e5b}
+.c b u{text-decoration:none;font-size:20px;font-weight:400;color:var(--mut)}.c:hover b u{color:#ffe3e3}
+.hsel{align-items:center;margin-top:12px}.hsel span{font-weight:500}.hsel select{flex:0 0 190px;min-width:140px}.hsel .seg-b{width:auto;margin:0;padding:11px 18px;font-size:15px}
+.ov.fx.on{display:flex;align-items:center;justify-content:center}
+.rbox{margin:0;max-width:470px;width:100%;padding:30px 26px 24px;text-align:center}
+.ric{width:76px;height:76px;border-radius:50%;margin:0 auto 14px;display:grid;place-items:center;font-size:40px;font-weight:600;color:#fff}
+.ric.ok{background:#2e9e5b}.ric.er{background:var(--pri)}.ric.pend{background:var(--pri2)}
+.spin{width:36px;height:36px;border-radius:50%;border:4px solid var(--bd);border-top-color:var(--pri);animation:rot .8s linear infinite;display:block}
+@keyframes rot{to{transform:rotate(360deg)}}
+.rbox h3{margin:0 0 6px;font-size:22px;font-weight:600}
+.rbox p{margin:0 0 14px;color:var(--mut);font-size:15px;line-height:1.55}
+.rd{text-align:left;background:var(--bg);border-radius:12px;padding:4px 14px;margin-bottom:16px}
+.rd:empty{display:none}
+.rd div{display:flex;gap:14px;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--bd);font-size:14px}
+.rd div:last-child{border:0}.rd span{color:var(--mut);flex:0 0 auto}.rd b{font-weight:500;text-align:right;word-break:break-word}
+.rbtn{display:flex;gap:10px}.rbtn button{margin:0;padding:12px;font-size:16px}
+.rbtn .ghost{background:var(--bg);color:var(--tx);border:1.5px solid var(--bd)}
+</style>
+</head>
+<body>
+<div class="hero"><div class="w">
+<div class="brand"><div><h1>ระบบส่งรายงานความปลอดภัย</h1><p>Safety Report Submission</p></div></div>
+<nav><a href="#home" id="n1">📊 ภาพรวม</a><a href="#dash" id="n3">📈 Dashboard</a><a href="#form" id="n2">📝 ส่งรายงาน</a></nav>
+</div></div>
+<main class="w">
+<section id="home" class="p">
+<div class="live"><i></i><span id="upd">กำลังโหลดข้อมูล...</span><button class="rf" id="rf" type="button">↻ รีเฟรช</button></div>
+<div class="prow hsel"><span>ดูข้อมูลของ</span><select id="hm"></select><select id="hy"></select><button type="button" id="hnow" class="seg-b">เดือนปัจจุบัน</button></div>
+<div class="n" style="margin-top:6px">รายงานรายเดือนนับตามเดือนที่เลือก · รายปีนับตามปีที่เลือก · จป.ว ประจำปี: ม.ค.–มิ.ย. = รอบที่ 1, ก.ค.–ธ.ค. = รอบที่ 2</div>
+<h2>จำนวนรายงานแยกตามหัวข้อ</h2>
+<div class="grid" id="cards"></div>
+<h2>รายการส่งล่าสุด</h2>
+<div class="box sc"><table><thead><tr><th>วันที่แนบ</th><th>ชื่อ</th><th>สาขา</th><th>หัวข้อ</th><th>ไฟล์</th></tr></thead><tbody id="rows"></tbody></table></div>
+</section>
+
+<section id="dash" class="p">
+<div class="box">
+<h2 style="margin-top:0">Dashboard การส่งรายงานรายสาขา</h2>
+<div class="prow"><select id="dt"></select></div>
+<div class="prow" style="margin-top:10px"><select id="dm"></select><select id="dr"></select><select id="dy"></select></div>
+<div id="dtype" class="n" style="margin-bottom:6px"></div>
+<div class="sum"><div><b id="dsent" style="color:#2e9e5b">0</b><small>ส่งแล้ว</small></div><div><b id="dmiss">0</b><small>ยังไม่ส่ง</small></div><div><b id="dpct">0%</b><small>ความครบถ้วน</small></div></div>
+<div class="pb"><i id="dbar"></i></div>
+<div class="prow" style="margin-top:16px"><input id="dq" placeholder="🔍  ค้นหารหัสหรือชื่อสาขา"><div class="seg" id="seg"><button type="button" data-f="all" class="on">ทั้งหมด</button><button type="button" data-f="y">ส่งแล้ว</button><button type="button" data-f="n">ยังไม่ส่ง</button></div></div>
+</div>
+<div class="tiles" id="tiles"></div>
+</section>
+
+<section id="form" class="p">
+<div class="box">
+<h2 style="margin-top:0">แบบฟอร์มส่งรายงาน</h2>
+<div class="f2">
+<div><label>ชื่อ-นามสกุล *</label><input id="name" placeholder="เช่น สมชาย ใจดี" autocomplete="name"></div>
+<div><label>สาขา * (พิมพ์รหัสหรือชื่อ แล้วเลือกจากรายการ)</label><input id="branch" list="bl" placeholder="เช่น HO หรือ สำนักงานใหญ่"><datalist id="bl"></datalist></div>
+<div class="full"><label>หัวข้อรายงาน *</label><select id="topic"></select></div>
+<div class="full" id="pbox" style="display:none"><label id="plabel">ช่วงเวลา *</label><div class="prow"><select id="pm"></select><select id="pr"></select><select id="py"></select></div></div>
+<div class="full"><label>วันที่แนบเอกสาร 🔒</label><input id="adate" readonly><div class="n">ล็อกเป็นวันปัจจุบัน แก้ไขไม่ได้</div></div>
+<div class="full"><label>แนบเอกสาร * (PDF / รูปภาพ / Word / Excel)</label><input id="file" type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,image/*"></div>
+</div>
+<button id="go">ส่งรายงาน</button>
+</div>
+</section>
+</main>
+<div class="ov" id="ov"><div class="md"><div class="mh"><h3>รายละเอียด: <em id="mt"></em></h3><button class="x" id="mx" type="button" aria-label="ปิด">×</button></div>
+<div class="mb"><input id="ms" placeholder="🔍  ค้นหาด้วยชื่อสาขาในหัวข้อนี้..."><div class="mt"><table><thead><tr><th>ลำดับ</th><th>สาขา</th><th>วันที่ส่งรายงาน</th><th>ดูไฟล์</th></tr></thead><tbody id="mr"></tbody></table></div></div></div></div>
+<div class="ov fx" id="rv"><div class="md rbox"><div id="ri" class="ric"></div><h3 id="rt"></h3><p id="rm"></p><div id="rd" class="rd"></div><div class="rbtn" id="rb"></div></div></div>
+<script>
+const TOPICS=["รายงานการประชุม คปอ.","รายงานตรวจ Safety audit ประจำเดือน","รายงานอบรม จป.ว 12 ชั่วโมง","รายงาน จป.ว ประจำปี","รายงานตรวจไฟฟ้าประจำปี","รายงานตรวจอาคาร","รายงานตรวจสภาพแวดล้อม","รายงานตรวจรับรองเครน ประจำปี","รายงานตรวจรับรองลิฟต์ ประจำปี","รายงานฝึกซ้อมอพยพหนีไฟประจำปี","รายงานตรวจไฟปั๊มประจำปี"];
+// รายชื่อสาขา (รหัส ชื่อ) แก้ไขได้ตรงนี้ บรรทัดละ 1 สาขา
+const BRANCHES=`HO สำนักงานใหญ่
+SRT สุราษฎร์ธานี
+NST นครศรีธรรมราช
+PKT ภูเก็ตถลาง
+PKF ภูเก็ตเฟสติวัล
+PKC ภูเก็ตฉลอง
+TRG ตรัง
+SKL สงขลา
+HAY หาดใหญ่
+CCS ชะเชิงเทรา
+SIM ปราจีนบุรี
+SKE สระแก้ว
+ARU อรัญ
+CTB จันทบุรี
+KLA แกลง
+RAY ระยอง
+BAC บ้านฉาง
+CBR ชลบุรี
+BAS บางแสน
+BOW บ่อวิน
+PT2 พัทยาใต้
+SRC ศรีราชา
+PNL พิษณุโลก
+KPT กำแพงเพชร
+PCB เพชรบูรณ์
+NKS นครสวรรค์
+LBR ลพบุรี
+UTI อุทัยธานี
+CNT ชัยนาท
+SPB สุพรรณบุรี
+SBR สระบุรี
+AYD อยุธยา
+DC คลังวังน้อย
+NPT นครปฐม
+SLY ศาลายา
+MHA มหาชัย
+BBO บางบอน
+OMN อ้อมน้อย
+BBT บางบัวทอง
+BYI บางใหญ่
+CYK ชัยพฤกษ์
+SSM ศรีสมาน
+CWT แจ้งวัฒนะ
+NIN นครอินทร์
+RA2 พระราม2
+RA3 พระราม3
+SK3 สุขาภิบาล3
+NWM นวมินทร์
+NCK หนองจอก
+PTM ปทุมธานี
+RST รังสิต
+RS4 รังสิตคลอง4
+MEK เมืองเอก
+LLK ลำลูกกา
+SSW สุขสวัสดิ์
+SMP สมุทรปราการ
+BNA บางนา
+BAP บางพลี
+NYK นครนายก
+RNB รัตนาธิเบศ
+TAK ตาก
+KCB กาญจนบุรี
+PBI เพชรบุรี
+CHA ชะอำ
+NBP หนองบัวลำภู
+UDK อุดรกุดสะ
+UDN อุดรธานี
+SKN สกลนคร
+MDH มุกดาหาร
+KSN กาฬสินธ์
+MHS มหาสารคาม
+RET ร้อยเอ็ด
+YST ยโสธร
+UBN อุบลราชธานี
+SSK ศรีสะเกษ
+SRN สุรินทร์
+BRA บุรีรัมย์
+NMA นครราชสีมา
+NHU โคราชหัวทะเล
+PAK ปากช่อง
+CYP ชัยภูมิ
+KKN ขอนแก่น
+KMP ขอนแก่นมิตรภาพ
+LEI เลย
+CRA เชียงราย
+MAC แม่จัน
+CMA เชียงใหม่
+CMS เชียงใหม่สันทราย
+LPA ลำปาง
+NAN น่าน
+PRE แพร่
+RBR ราชบุรี`.split("\n").map(x=>x.trim()).filter(Boolean);
+// ===== ตั้งค่าเชื่อม SharePoint ผ่าน Power Automate (ดูคู่มือ) =====
+const SP_READ_URL="https://default817e531d191b4cf58812f0061d89b5.3d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/15/workflows/6453dda8c7014cc0834c55f45aa2f82f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=vD8A4V0TekqNjoFNrCepi9u1UbrwD6erLq65vBhjlg4";    // Flow B (HTTP GET)  -> คืน JSON รายการรายงานจาก SharePoint List
+const SP_SUBMIT_URL="https://default817e531d191b4cf58812f0061d89b5.3d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/23/workflows/7c7ed9386725464f925c31801bd61c8b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=JxRLL0ol2wZ1Fx27OrR54Yp0ZXdDjI_gQAegTQzZ2Zc";  // Flow A (HTTP POST) -> บันทึกไฟล์ + รายการลง SharePoint
+const REFRESH_SEC=3600; // ดึงข้อมูลใหม่ทุกกี่วินาที (3600 = 1 ชั่วโมง) หยุดอัตโนมัติเมื่อแท็บไม่ได้เปิดอยู่
+const YEARS_BACK=2;       // จำนวนปีที่ให้เลือกในตัวเลือกปี (ปีนี้ + ย้อนหลัง) ตั้งให้ตรงกับรอบย้ายข้อมูลเก็บถาวร
+const $=id=>document.getElementById(id);
+let data=[],db=null,assets=null;
+const two=n=>String(n).padStart(2,"0");
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+two(d.getMonth()+1)+"-"+two(d.getDate())};
+$("bl").innerHTML=BRANCHES.map(b=>`<option value="${b}">`).join("");
+$("topic").innerHTML='<option value="">-- เลือกหัวข้อ --</option>'+TOPICS.map((t,i)=>`<option value="${i}">${t}</option>`).join("");
+$("adate").value=today();
+const TYPE=["m","m","y","h","y","y","y","y","y","y","y"];
+const TYN={m:"รายงานประจำเดือน",y:"รายงานประจำปี",h:"รายงานปีละ 2 รอบ (มกราคม / กรกฎาคม)"};
+const MTH=["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+const NOW=new Date(),CY=NOW.getFullYear(),CM=NOW.getMonth()+1;
+const optM=MTH.map((m,i)=>`<option value="${i+1}">${m}</option>`).join("");
+const optY=Array.from({length:YEARS_BACK},(_,i)=>CY-i).map(y=>`<option value="${y}">พ.ศ. ${y+543}</option>`).join("");
+const optR='<option value="1">รอบที่ 1 (มกราคม)</option><option value="2">รอบที่ 2 (กรกฎาคม)</option>';
+function initP(m,y,r){m.innerHTML=optM;y.innerHTML=optY;r.innerHTML=optR;m.value=CM;y.value=CY;r.value=CM>=7?2:1}
+function showP(m,y,r,t){m.style.display=t==="m"?"":"none";r.style.display=t==="h"?"":"none";y.style.display=t?"":"none"}
+const pKey=(t,m,y,r)=>t==="m"?y+"-"+two(m):t==="y"?""+y:y+"-R"+r;
+initP($("pm"),$("py"),$("pr"));initP($("dm"),$("dy"),$("dr"));
+$("dt").innerHTML=TOPICS.map((t,i)=>`<option value="${i}">${t}</option>`).join("");
+$("topic").onchange=()=>{const v=$("topic").value;$("pbox").style.display=v===""?"none":"";if(v!==""){const t=TYPE[+v];showP($("pm"),$("py"),$("pr"),t);$("plabel").textContent="ช่วงเวลาของรายงาน * ("+TYN[t]+")"}};
+let dsf="all";
+function renderDash(){
+ const t=+$("dt").value,ty=TYPE[t];showP($("dm"),$("dy"),$("dr"),ty);$("dtype").textContent="หัวข้อนี้เป็น"+TYN[ty]+" · นับสถานะตามช่วงเวลาที่เลือก";
+ const key=pKey(ty,$("dm").value,$("dy").value,$("dr").value),map={};
+ const rows=SP_READ_URL?(dLoaded===t+"|"+key?dData:null):data;
+ if(!rows){$("dsent").textContent=$("dmiss").textContent=$("dpct").textContent="…";$("tiles").innerHTML='<div class="n">'+(dLoaded===t+"|"+key+"|err"?"โหลดข้อมูล Dashboard ไม่สำเร็จ (ตรวจ Flow B แล้วกดเปลี่ยนตัวเลือกเพื่อลองใหม่)":"กำลังโหลดข้อมูล...")+'</div>';return}
+ rows.filter(r=>r.topic===t&&r.period===key).forEach(r=>{const c=(r.branch||"").split(" ")[0];if(!map[c]||(r.ts||"")>(map[c].ts||""))map[c]=r});
+ const all=BRANCHES.map(b=>{const c=b.split(" ")[0];return{b,c,r:map[c]}}),sent=all.filter(x=>x.r).length,q=$("dq").value.trim().toLowerCase();
+ $("dsent").textContent=sent;$("dmiss").textContent=all.length-sent;const p=Math.round(sent/all.length*100);$("dpct").textContent=p+"%";$("dbar").style.width=p+"%";
+ const L=all.filter(x=>(dsf==="all"||(dsf==="y")===!!x.r)&&(!q||x.b.toLowerCase().includes(q)));
+ $("tiles").innerHTML=L.map(x=>{const s=x.r,nm=x.b.slice(x.c.length+1),d=s?fmt(s).split(" ").slice(0,3).join(" "):"";
+  const inn=`<em>${esc(x.c)}</em><span>${esc(nm)}</span><small>${s?"✓ ส่งแล้ว "+esc(d):"✗ ยังไม่ส่ง"}</small>`;
+  return s&&s.fileUrl?`<a class="tl ok" href="${esc(s.fileUrl)}" target="_blank" rel="noopener">${inn}</a>`:`<div class="tl ${s?"ok":"no"}">${inn}</div>`}).join("")||'<div class="n">ไม่พบสาขาที่ค้นหา</div>';
+}
+["dt","dm","dr","dy"].forEach(i=>$(i).onchange=()=>{renderDash();loadDash()});$("dq").oninput=renderDash;
+$("seg").onclick=e=>{const b=e.target.closest("button");if(!b)return;dsf=b.dataset.f;[...$("seg").children].forEach(x=>x.classList.toggle("on",x===b));renderDash()};
+
+function esc(s){const d=document.createElement("div");d.textContent=s??"";return d.innerHTML}
+function stamp(ok,txt){$("upd").textContent=txt;document.querySelector(".live").classList.toggle("off",!ok)}
+let dData=[],dLoaded="";
+const brCode=r=>(r.branch||"").split(" ")[0];
+let SY=CY,SM=CM,hLoad=false;
+const curKey=i=>{const t=TYPE[i];return t==="m"?SY+"-"+two(SM):t==="y"?""+SY:SY+"-R"+(SM>=7?2:1)};
+const curKeys=()=>[SY+"-"+two(SM),""+SY,SY+"-R"+(SM>=7?2:1)];
+function pLabel(t,k){const y=+k.slice(0,4)+543;return t==="m"?MTH[+k.slice(5,7)-1]+" "+y:t==="y"?"ปี "+y:"รอบที่ "+k.slice(-1)+" ปี "+y}
+function sentSet(i){const k=curKey(i),m={};data.filter(r=>r.topic===i&&r.period===k).forEach(r=>{const c=brCode(r);if(!m[c]||(r.ts||"")>(m[c].ts||""))m[c]=r});return m}
+function render(){
+ $("cards").innerHTML=TOPICS.map((t,i)=>`<div class="c" data-i="${i}"><span>${t}</span><b>${hLoad?"…":Object.keys(sentSet(i)).length}<u>/${BRANCHES.length}</u></b><small>สาขาที่ส่งแล้ว · ${pLabel(TYPE[i],curKey(i))}</small></div>`).join("");
+ renderModal();renderDash();
+ const L=[...data].sort((a,b)=>((b.attachDate||"")+(b.ts||"")).localeCompare((a.attachDate||"")+(a.ts||""))).slice(0,20);
+ $("rows").innerHTML=L.length?L.map(r=>`<tr><td>${esc(r.attachDate)}</td><td>${esc(r.name)}</td><td>${esc(r.branch)}</td><td><span class="tag">${esc(TOPICS[r.topic])}</span></td><td>${r.fileUrl?`<a href="${esc(r.fileUrl)}" target="_blank" rel="noopener">เปิด</a>`:"-"}</td></tr>`).join(""):'<tr><td colspan="5" style="text-align:center;color:var(--mut)">ยังไม่มีข้อมูล</td></tr>';
+}
+$("hm").innerHTML=optM;$("hy").innerHTML=optY;$("hm").value=CM;$("hy").value=CY;
+function hChange(){SM=+$("hm").value;SY=+$("hy").value;if(SP_READ_URL){hLoad=true;render();loadSP()}else render()}
+$("hm").onchange=$("hy").onchange=hChange;
+$("hnow").onclick=()=>{$("hm").value=CM;$("hy").value=CY;hChange()};
+const TH=["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+function fmt(r){const d=new Date(r.ts);if(!r.ts||isNaN(d))return r.attachDate||"-";return d.getDate()+" "+TH[d.getMonth()]+" "+(d.getFullYear()+543)+" "+two(d.getHours())+":"+two(d.getMinutes())}
+let openT=-1;
+function renderModal(){
+ if(openT<0)return;
+ const q=$("ms").value.trim().toLowerCase();
+ const L=Object.values(sentSet(openT)).filter(r=>(r.branch||"").toLowerCase().includes(q)).sort((a,b)=>((b.ts||"")+(b.attachDate||"")).localeCompare((a.ts||"")+(a.attachDate||"")));
+ $("mr").innerHTML=L.length?L.map((r,i)=>`<tr><td>${i+1}</td><td><b>${esc(r.branch)}</b></td><td>${esc(fmt(r))}</td><td>${r.fileUrl?`<a href="${esc(r.fileUrl)}" target="_blank" rel="noopener">ดูไฟล์</a>`:"-"}</td></tr>`).join(""):'<tr><td colspan="4" style="text-align:center;color:var(--mut);padding:28px">ยังไม่มีรายงานในหัวข้อนี้</td></tr>';
+}
+$("cards").onclick=e=>{const c=e.target.closest(".c");if(!c)return;openT=+c.dataset.i;$("mt").textContent=TOPICS[openT]+" · "+pLabel(TYPE[openT],curKey(openT));$("ms").value="";renderModal();$("ov").classList.add("on")};
+const closeM=()=>{openT=-1;$("ov").classList.remove("on")};
+$("mx").onclick=closeM;$("ov").onclick=e=>{if(e.target.id==="ov")closeM()};
+addEventListener("keydown",e=>{if(e.key==="Escape")closeM()});
+$("ms").oninput=renderModal;
+function norm(r){const t=typeof r.topic==="number"?r.topic:TOPICS.indexOf(r.topic),ty=TYPE[t],ad=(r.attachDate||"").slice(0,10);let p=r.period||"";if(!p&&ad)p=ty==="m"?ad.slice(0,7):ty==="y"?ad.slice(0,4):ad.slice(0,4)+"-R"+(+ad.slice(5,7)>=7?2:1);return{name:r.name,branch:r.branch,topic:t,period:p,attachDate:ad,fileUrl:r.fileUrl||"",ts:r.ts||""}}
+const sp=q=>SP_READ_URL+(SP_READ_URL.includes("?")?"&":"?")+q;
+async function fetchRows(q){const r=await fetch(sp(q),{cache:"no-store"});if(!r.ok)throw 0;const j=await r.json();return(Array.isArray(j)?j:(j.items||[])).map(norm)}
+let lastLoad=0;
+const everyTxt=()=>REFRESH_SEC>=3600?REFRESH_SEC/3600+" ชั่วโมง":REFRESH_SEC>=60?Math.round(REFRESH_SEC/60)+" นาที":REFRESH_SEC+" วินาที";
+async function loadSP(){
+ const q=curKeys().join(",");
+ try{const rows=await fetchRows("periods="+encodeURIComponent(q));if(q!==curKeys().join(","))return;data=rows;lastLoad=Date.now();hLoad=false;render();
+  const d=new Date();stamp(true,"ข้อมูลจาก SharePoint · อัปเดตล่าสุด "+two(d.getHours())+":"+two(d.getMinutes())+":"+two(d.getSeconds())+" · ได้รับ "+data.length+" รายการ (รีเฟรชอัตโนมัติทุก "+everyTxt()+" · กดปุ่ม ↻ เพื่อรีเฟรชทันที)");
+ }catch(e){hLoad=false;render();stamp(false,"เชื่อมต่อ SharePoint ไม่ได้ จะลองใหม่อัตโนมัติ")}
+ if($("dash").classList.contains("on"))loadDash();
+}
+async function loadDash(){
+ if(!SP_READ_URL)return;
+ const t=+$("dt").value,k=pKey(TYPE[t],$("dm").value,$("dy").value,$("dr").value),id=t+"|"+k;
+ try{dData=await fetchRows("periods="+encodeURIComponent(k)+"&topic="+encodeURIComponent(TOPICS[t]));dLoaded=id}catch(e){dLoaded=id+"|err"}
+ renderDash();
+}
+function route(){const h=location.hash,pg=h==="#form"?"form":h==="#dash"?"dash":"home";["home","dash","form"].forEach(p=>$(p).classList.toggle("on",p===pg));$("n1").classList.toggle("on",pg==="home");$("n3").classList.toggle("on",pg==="dash");$("n2").classList.toggle("on",pg==="form");if(pg==="dash")loadDash()}
+addEventListener("hashchange",route);route();render();
+function dlg(kind,title,text,rows,btns){
+ $("ri").className="ric "+kind;$("ri").innerHTML=kind==="ok"?"✓":kind==="er"?"✕":'<i class="spin"></i>';
+ $("rt").textContent=title;$("rm").textContent=text||"";
+ $("rd").innerHTML=(rows||[]).map(r=>`<div><span>${esc(r[0])}</span><b>${esc(r[1])}</b></div>`).join("");
+ $("rb").innerHTML="";(btns||[]).forEach(b=>{const e=document.createElement("button");e.type="button";e.textContent=b[0];e.className=b[2]||"";e.onclick=b[1];$("rb").appendChild(e)});
+ $("rv").classList.add("on");
+}
+const closeR=()=>$("rv").classList.remove("on");
+const LBL={name:"ชื่อ-นามสกุล",branch:"สาขา (ต้องเลือกจากรายการ)",topic:"หัวข้อรายงาน",file:"ไฟล์เอกสาร"};
+function errText(e){
+ if(e&&e.name==="AbortError")return["ใช้เวลานานเกินไป","การส่งใช้เวลาเกิน 2 นาที ไฟล์อาจใหญ่เกินไปหรืออินเทอร์เน็ตช้า รายงานอาจถูกบันทึกไปแล้วบางส่วน โปรดตรวจกับผู้ดูแลระบบก่อนส่งซ้ำ"];
+ if(e&&e.http)return["ระบบ SharePoint ตอบกลับผิดพลาด","รหัสข้อผิดพลาด "+e.http+" · ข้อมูลที่กรอกยังอยู่ ลองส่งอีกครั้ง หากยังไม่สำเร็จให้แจ้งผู้ดูแลระบบ"];
+ if(e instanceof TypeError)return["เชื่อมต่อเซิร์ฟเวอร์ไม่ได้","ตรวจสอบอินเทอร์เน็ตแล้วลองส่งอีกครั้ง ข้อมูลที่กรอกยังอยู่ ไม่ต้องกรอกใหม่"];
+ return["ส่งรายงานไม่สำเร็จ",((e&&e.message)||"ไม่ทราบสาเหตุ")+" · ข้อมูลที่กรอกยังอยู่ ลองส่งอีกครั้ง"];
+}
+async function init(){
+ if(SP_READ_URL){loadSP();setInterval(()=>{if(!document.hidden)loadSP()},REFRESH_SEC*1000);document.addEventListener("visibilitychange",()=>{if(!document.hidden&&Date.now()-lastLoad>REFRESH_SEC*1000)loadSP()});$("rf").onclick=loadSP;return}
+ stamp(false,"โหมดทดสอบ: ยังไม่ได้เชื่อม SharePoint (ข้อมูลเก็บในระบบของหน้านี้)");$("rf").style.display="none";
+ try{
+  if(!window.claude)return;
+  db=await claude.use("db");assets=await claude.use("assets");
+  if(db){stamp(true,"โหมดทดสอบ: อัปเดตแบบเรียลไทม์ (ยังไม่ได้เชื่อม SharePoint)");db.collection("reports").onSnapshot(s=>{data=s.docs.map(d=>norm(typeof d.data==="function"?d.data():d.data));render()},e=>console.log(e))}
+ }catch(e){console.log(e)}
+}
+init();
+const FLD=["name","branch","topic","file"];FLD.forEach(i=>["input","change"].forEach(ev=>$(i).addEventListener(ev,()=>$(i).classList.remove("bad"))));
+const b64=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(f)});
+$("go").onclick=async()=>{
+ const name=$("name").value.trim(),branch=$("branch").value.trim(),topic=$("topic").value,f=$("file").files[0];
+ const bad=[];
+ if(!name)bad.push("name");if(!BRANCHES.includes(branch))bad.push("branch");if(topic==="")bad.push("topic");if(!f)bad.push("file");
+ FLD.forEach(i=>$(i).classList.toggle("bad",bad.includes(i)));
+ if(bad.length)return dlg("er","ส่งไม่ได้ ข้อมูลไม่ครบถ้วน","กรุณาตรวจสอบช่องที่ขึ้นกรอบสีแดง ได้แก่",bad.map(x=>["•",LBL[x]]),[["ตกลง",closeR]]);
+ $("go").disabled=true;
+ dlg("pend","กำลังส่งรายงาน...","กรุณารอสักครู่และอย่าปิดหน้านี้ ไฟล์ใหญ่อาจใช้เวลาประมาณ 1 นาที",[],[]);
+ try{
+  const rec={name,branch,topic:TOPICS[+topic],period:pKey(TYPE[+topic],$("pm").value,$("py").value,$("pr").value),attachDate:today(),fileName:f.name,ts:new Date().toISOString()};
+  if(SP_SUBMIT_URL){
+   const body=JSON.stringify({...rec,fileContent:await b64(f)}),ac=new AbortController(),tm=setTimeout(()=>ac.abort(),120000);
+   let rep;try{rep=await fetch(SP_SUBMIT_URL,{method:"POST",headers:{"Content-Type":"text/plain"},body,signal:ac.signal})}finally{clearTimeout(tm)}
+   if(!rep.ok){const er=new Error("HTTP");er.http=rep.status;throw er}
+   if(SP_READ_URL)loadSP();
+  }else{
+   if(!db)throw new Error("ยังไม่ได้เชื่อมฐานข้อมูล (ต้องเปิดผ่านลิงก์ claude.ai และล็อกอิน)");
+   let fileUrl="";if(assets){fileUrl=(await assets.upload(f)).url}
+   await db.collection("reports").add({...rec,topic:+topic,fileUrl});
+  }
+  dlg("ok","ส่งรายงานสำเร็จ","ระบบบันทึกรายงานของคุณเรียบร้อยแล้ว",[["ผู้ส่ง",name],["สาขา",branch],["หัวข้อ",TOPICS[+topic]],["ช่วงเวลา",pLabel(TYPE[+topic],rec.period)],["ไฟล์",f.name],["ส่งเมื่อ",fmt(rec)]],[["ส่งรายงานเพิ่ม",closeR],["ดูภาพรวม",()=>{closeR();location.hash="#home"},"ghost"]]);
+  ["name","branch"].forEach(i=>$(i).value="");$("topic").value="";$("pbox").style.display="none";$("file").value="";
+ }catch(e){const[t,m]=errText(e);dlg("er",t,m,[["สาขา",branch],["หัวข้อ",TOPICS[+topic]],["ไฟล์",f.name]],[["แก้ไขและลองใหม่",closeR]])}
+ $("go").disabled=false;
+};
+</script>
+</body>
+</html>
