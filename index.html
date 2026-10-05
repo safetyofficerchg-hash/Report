@@ -169,7 +169,7 @@ a.tl:hover{transform:translateY(-3px);box-shadow:var(--sh);border-color:#2e9e5b}
 <div class="mb"><input id="ms" placeholder="🔍  ค้นหาด้วยชื่อสาขาในหัวข้อนี้..."><div class="mt"><table><thead><tr><th>ลำดับ</th><th>สาขา</th><th>วันที่ส่งรายงาน</th><th>ดูไฟล์</th></tr></thead><tbody id="mr"></tbody></table></div></div></div></div>
 <div class="ov fx" id="rv"><div class="md rbox"><div id="ri" class="ric"></div><h3 id="rt"></h3><p id="rm"></p><div id="rd" class="rd"></div><div class="rbtn" id="rb"></div></div></div>
 <script>
-const TOPICS=["รายงานการประชุม คปอ.","รายงานตรวจ Safety audit ประจำเดือน","รายงานอบรม จป.ว 12 ชั่วโมง","รายงาน จป.ว ประจำปี","รายงานตรวจไฟฟ้าประจำปี","รายงานตรวจอาคาร","รายงานตรวจสภาพแวดล้อม","รายงานตรวจรับรองเครน ประจำปี","รายงานตรวจรับรองลิฟต์ ประจำปี","รายงานฝึกซ้อมอพยพหนีไฟประจำปี","รายงานตรวจไฟปั๊มประจำปี"];
+const TOPICS=["รายงานการประชุม คปอ.","รายงานอบรม จป.ว 12 ชั่วโมง","รายงาน จป.ว ประจำปี","รายงานตรวจไฟฟ้าประจำปี","รายงานตรวจอาคาร","รายงานตรวจสภาพแวดล้อม","รายงานตรวจรับรองเครน ประจำปี","รายงานตรวจรับรองลิฟต์ ประจำปี","รายงานฝึกซ้อมอพยพหนีไฟประจำปี","รายงานตรวจไฟปั๊มประจำปี"];
 // รายชื่อสาขา (รหัส ชื่อ) แก้ไขได้ตรงนี้ บรรทัดละ 1 สาขา
 const BRANCHES=`HO สำนักงานใหญ่
 SRT สุราษฎร์ธานี
@@ -275,7 +275,7 @@ const today=()=>{const d=new Date();return d.getFullYear()+"-"+two(d.getMonth()+
 $("bl").innerHTML=BRANCHES.map(b=>`<option value="${b}">`).join("");
 $("topic").innerHTML='<option value="">-- เลือกหัวข้อ --</option>'+TOPICS.map((t,i)=>`<option value="${i}">${t}</option>`).join("");
 $("adate").value=today();
-const TYPE=["m","m","y","h","y","y","y","y","y","y","y"];
+const TYPE=["m","y","h","y","y","y","y","y","y","y"];
 const TYN={m:"รายงานประจำเดือน",y:"รายงานประจำปี",h:"รายงานปีละ 2 รอบ (มกราคม / กรกฎาคม)"};
 const MTH=["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
 const NOW=new Date(),CY=NOW.getFullYear(),CM=NOW.getMonth()+1;
